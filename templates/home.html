@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        {% include 'includes/header.html' %}
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+        {% include 'includes/navbar.html' %}
+        {% include 'includes/menubar.html' %}
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>
+            Dashboard
+          </h1>
+          <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Dashboard</li>
+          </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <!-- Small boxes (Stat box) -->
+            <div class="row">
+              <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-aqua">
+                  <div class="inner">
+                    <h3>3</h3>
+                    <p>No. of Sites</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fa fa-tasks"></i>
+                  </div>
+                </div>
+              </div>
+              <!-- ./col -->
+              <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-green">
+                  <div class="inner">
+                    <h3>13</h3>
+
+                    <p>Total Users</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fa fa-black-tie"></i>
+                  </div>
+                </div>
+              </div>
+              <!-- ./col -->
+              <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-yellow">
+                  <div class="inner">
+                    <h3>23</h3>
+
+                    <p>Products Bought</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fa fa-users"></i>
+                  </div>
+                </div>
+              </div>
+              <!-- ./col -->
+              <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-red">
+                  <div class="inner">
+                      <h3>51</h3>
+
+                    <p>Total Searches</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fa fa-edit"></i>
+                  </div>
+                </div>
+              </div>
+              <!-- ./col -->
+            </div>
+
+            <div class="row">
+              <form class="form-horizontal" method="GET" action="/search-item" style="margin:32px">
+                  <div class="form-group">
+
+                      <input type="text" class="form-control" id="search-item" name="item" required placeholder="Enter item to search here" style="height:50px;">
+                </div>
+                  <button type="submit" class="btn btn-primary btn-flat"> Search</button>
+
+              </form>
+            </div>
+        </section>
+
+  </div>
+
+        {% include 'includes/footer.html' %}
+
+    </div>
+</body>
+</html>

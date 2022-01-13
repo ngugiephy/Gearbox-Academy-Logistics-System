@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        {% include 'includes/header.html' %}
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+        {% include 'includes/navbar.html' %}
+        {% include 'includes/menubar.html' %}
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>
+            Login
+          </h1>
+          <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Login</li>
+          </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+           <div class="row">
+              <form class="form-horizontal" method="POST" style="margin:32px">
+                  <div class="form-group">
+                      <input type="text" class="form-control" name="email" required placeholder="Enter Your Email" style="height:50px;width:300px"><br>
+                      <input type="password" class="form-control" name="password" required placeholder="Enter Your Password" style="height:50px;width:300px"><br>
+                </div>
+                  <button type="submit" name="submit" class="btn btn-primary btn-flat"> Login</button>
+
+              </form>
+               <a href="/forgot-password">Forgot password</a>
+            </div>
+        </section>
+
+  </div>
+
+        {% include 'includes/footer.html' %}
+
+    </div>
+</body>
+</html>
