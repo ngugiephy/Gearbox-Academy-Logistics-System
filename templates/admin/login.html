@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-        {% include 'includes/header.html' %}
+        {% include 'admin/includes/header.html' %}
 
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
     <div class="wrapper">
-        {% include 'includes/navbar.html' %}
-        {% include 'includes/menubar.html' %}
+        {% include 'admin/includes/navbar.html' %}
+        {% include 'admin/includes/menubar.html' %}
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -46,15 +46,17 @@
                       <input type="password" class="form-control" name="password" required placeholder="Enter Your Password" style="height:50px;width:300px"><br>
                 </div>
                   <button type="submit" name="submit" class="btn btn-primary btn-flat"> Login</button>
+                  <br>
+                  <br>
+                <a href="/forgot-password">Forgot password?</a>
 
               </form>
-               <a href="/forgot-password">Forgot password</a>
             </div>
         </section>
 
   </div>
 
-        {% include 'includes/footer.html' %}
+        {% include 'admin/includes/footer.html' %}
     {% include 'admin/includes/scripts.html' %}
 
     </div>
