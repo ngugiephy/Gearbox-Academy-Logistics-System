@@ -1,0 +1,204 @@
+
+{% include 'includes/header.html' %}
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  {% include 'includes/navbar.html' %}
+  {% include 'includes/menubar.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        Cart Items List
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">checkout</li>
+      </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+        {% if session['error-message'] %}
+            <div class='alert alert-danger alert-dismissible'>
+              <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+              <h4><i class='icon fa fa-warning'></i> Error!</h4>
+                {{session.pop('error-message')}}
+            </div>
+        {% endif %}
+        {% if session['success-message'] %}
+            <div class='alert alert-success alert-dismissible'>
+              <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+              <h4><i class='icon fa fa-check'></i> Success!</h4>
+                {{session.pop('success-message')}}
+            </div>
+        {% endif %}
+
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+<!--            <div class="box-header with-border">-->
+<!--              <a href="#addnew" data-toggle="modal" class="btn btn-primary btn-sm btn-flat"><i class="fa fa-plus"></i>Add New Item</a>-->
+<!--            </div>-->
+            <div class="box-body">
+              <table id="example1" class="table table-bordered">
+                <thead>
+                  <th>ID</th>
+                  <th>Photo</th>
+                  <th>Name</th>
+                  <th>Shelf No.</th>
+                  <th>Drawer No.</th>
+                  <th>Action</th>
+                </thead>
+                <tbody>
+                   {%for item in items%}
+                       <tr>
+                          <td>{{item.get('id')}}</td>
+                          <td> <img src="/static/images/{{item.get('image')}}" width='100px' height='100px'> </td>
+                          <td>{{item.get('name')}}</td>
+                          <td>{{item.get('shelf')}}</td>
+                          <td>{{item.get('drawer')}}</td>
+                          <td>
+                              <input type="number" class="quantity" value="1" min="1" max="10">
+<!--                            <button class='btn btn-success btn-sm edit btn-flat' data-id='{{item.get("id")}}'><i class="fas fa-cart-plus"></i> Add</button>-->
+                            <button class='btn btn-danger btn-sm delete btn-flat' data-id='{{item.get("id")}}'><i class='fa fa-trash'></i> Remove</button>
+                          </td>
+                        </tr>
+                   {%endfor%}
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+          <center>
+                  <button class='btn btn-success btn-sm  btn-flat' id="open-locks" style="height: 50px; width:150px;  font-size: large;" >
+                      <i id="lock-closed" class="fa fa-unlock"></i>
+                      <i id="lock-opened" class="fa fa-unlock" style="display: none;"></i>
+                          Open Locks</button>
+
+          </center>
+      </div>
+    </section>
+  </div>
+
+    {% include 'includes/footer.html' %}
+</div>
+    {% include 'includes/scripts.html' %}
+<script>
+$(function(){
+  $(document).on('click', '.edit', function(e){
+    e.preventDefault();
+    $('#edit').modal('show');
+    var id = $(this).data('id');
+    
+    $(this).text('Added');
+    $(this).removeClass('edit');
+    
+    addItemToCart(id);
+
+  });
+
+  $(document).on('click', '.delete', function(e){
+    e.preventDefault();
+    $('#delete').modal('show');
+    var id = $(this).data('id');
+
+    deleteItemFromCart(id);
+    $(this).parent().parent().remove();
+
+  });
+
+  $(document).on('click', '#open-locks', function(e){
+    $(this).text('Locks Opened');
+    // $('#lock-opened').style.display = 'inline';
+    // $('#lock-closed').remove();
+    items = []
+
+    var trs = $("#example1").find("tbody>tr");
+    for (var i = trs.length - 1; i >= 0; i--) {
+      id = $(trs[i]).find('button').data('id');
+      quantity = $(trs[i]).find('input').val();
+      items.push({
+        id: id,
+        quantity: quantity
+      });
+    }
+
+    console.log(items);
+
+    $.ajax({
+    type: 'POST',
+    url: '',
+    data: { 'open-locks': '', items: JSON.stringify(items) },
+    dataType: 'json',
+    success: function(response){
+
+      Toastify({
+        text: "Shelves have been opened successfully",
+        duration: 5000,
+        close: true,
+        gravity: "bottom", // `top` or `bottom`
+        position: "right", // `left`, `center` or `right`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        className: 'alert alert-success alert-dismissible'
+      }).showToast();
+
+
+      }
+    });
+
+    // remove listening to further clicks
+    $(document).on('click', '#open-locks', function(e){});
+  });
+
+});
+
+function deleteItemFromCart(id){
+  $.ajax({
+    type: 'POST',
+    url: '',
+    data: {id:id, 'delete-item-from-cart': ''},
+    dataType: 'json',
+    success: function(response){
+
+      Toastify({
+        text: response.name+" deleted successfully",
+        duration: 5000,
+        close: true,
+        gravity: "bottom", // `top` or `bottom`
+        position: "right", // `left`, `center` or `right`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        // style: {
+        //   background: "linear-gradient(to right, #222C33, #00B85E)",
+        // }
+        className: 'alert alert-success alert-dismissible'
+      }).showToast();
+    }
+  });
+}
+
+function getRow(id){
+  $.ajax({
+    type: 'POST',
+    url: '',
+    data: {id:id, 'get-row': ''},
+    dataType: 'json',
+    success: function(response){
+      $('.id').val(response.id);
+      $('#edit_name').val(response.name);
+      $('#edit_shelf').val(response.shelf);
+      $('#edit_drawer').val(response.drawer);
+      $('#edit_quantity').val(response.quantity);
+      $('#edit_description').val(response.description);
+      $('#edit_link').val(response.external_link);
+      $('.fullname').html(response.name);
+    }
+  });
+}
+
+
+</script>
+</body>
+</html>
