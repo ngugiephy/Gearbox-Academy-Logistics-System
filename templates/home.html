@@ -59,7 +59,7 @@
                   <div class="inner">
                     <h3>23</h3>
 
-                    <p>Products Bought</p>
+                    <p>Products Taken</p>
                   </div>
                   <div class="icon">
                     <i class="fa fa-users"></i>
@@ -83,7 +83,49 @@
               <!-- ./col -->
             </div>
 
-            
+        <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+        <br>
+        <br>
+        <div id="chartContainerDays" style="height: 300px; width: 100%;"></div>
+        <br>
+        <br>
+
+                    
+        <script type="text/javascript">
+
+        window.onload = function () {
+        	var chart = new CanvasJS.Chart("chartContainer", {
+        		title:{
+        			text: "Items Usage"
+        		},
+        		data: [
+        		{
+        			// Change type to "doughnut", "line", "splineArea", etc.
+        			type: "pie",
+        			dataPoints: {{labels|safe}}
+        		}
+        		]
+        	});
+        	chart.render();
+
+          var chart2 = new CanvasJS.Chart("chartContainerDays", {
+            title:{
+              text: "This Month's Usage"
+            },
+            data: [
+            {
+              // Change type to "doughnut", "line", "splineArea", etc.
+              type: "splineArea",
+              dataPoints: {{days_labels|safe}}
+            }
+            ]
+          });
+          chart2.render();
+        }
+        </script>
+
+
+
             
         </section>
 
@@ -93,5 +135,7 @@
     {% include 'includes/scripts.html' %}
 
     </div>
+
+
 </body>
 </html>

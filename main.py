@@ -1,10 +1,14 @@
-from flask import Flask, request
-import flask
-import mysql.connector
-import bcrypt
-import os
-import json
+from flask import Flask, request  # for reading form data from client
+import flask  # The framework for python's web development
+import mysql.connector  # for connecting to MySQL database
+import bcrypt  # for hashing passwords
+import os  # for saving uploaded images to file system
+import json  # for manipulating AJAX request data
 
+
+"""
+    Set your MySQL's password here
+"""
 DATABASE_USER = 'phpmyadmin'
 DATABASE_PASSWORD = '123456'
 DATABASE_HOST = 'localhost'
@@ -24,11 +28,79 @@ my_db = mysql.connector.connect(
 my_cursor = my_db.cursor(dictionary=True)
 
 
+#############################
+# User section begins here  #
+#############################
+
 @app.route('/', methods=['GET'])
 def index():
     if not flask.session.get('logged_in'):
         return flask.redirect(flask.url_for('login'))
-    return flask.render_template('home.html')
+
+    def make_ordinal(n):
+        """
+        Convert an integer into its ordinal representation::
+
+            make_ordinal(0)   => '0th'
+            make_ordinal(3)   => '3rd'
+            make_ordinal(122) => '122nd'
+            make_ordinal(213) => '213th'
+        """
+        n = int(n)
+        if 11 <= (n % 100) <= 13:
+            suffix = 'th'
+        else:
+            suffix = ['th', 'st', 'nd', 'rd', 'th'][min(n % 10, 4)]
+        return str(n) + suffix
+
+    user_id = flask.session.get('user_id')
+
+    my_cursor.execute('SELECT DISTINCT item_id FROM logs WHERE user_id = %s', (user_id,))
+    items = my_cursor.fetchall()
+
+    labels = []
+    days_labels = []
+
+    explode_first_pie_chart = True
+
+    for item in items:
+        my_cursor.execute('SELECT name FROM items WHERE id = %s', (item.get('item_id'),))
+        name = my_cursor.fetchone().get('name')
+
+        my_cursor.execute('SELECT count(item_id) FROM logs WHERE item_id = %s ORDER BY COUNT(item_id)',
+                          (item.get('item_id'),))
+        count = my_cursor.fetchone().get('count(item_id)')
+
+        if explode_first_pie_chart:
+            labels.append({
+                'label': name,
+                'exploded': 'true',
+                'y': count
+            })
+            explode_first_pie_chart = False
+        else:
+            labels.append({
+                'label': name,
+                'y': count
+            })
+    # might not work well at the beginning of a month or a year
+    # above solved now
+    my_cursor.execute('SELECT DATE_FORMAT(date_time, "%d") AS date FROM logs'
+                      ' WHERE user_id = %s AND  MONTH(date_time) = MONTH(CURRENT_DATE()) '
+                      'AND YEAR(date_time) = YEAR(CURRENT_DATE()) ORDER BY date_time ASC',
+                      (user_id,))
+    dates = my_cursor.fetchall()
+    dates = [d['date'] for d in dates]
+    dates_set = list(set(dates))
+    dates_set.sort()
+
+    for date in dates_set:
+        days_labels.append({
+            'label': make_ordinal(date),
+            'y': dates.count(date)
+        })
+
+    return flask.render_template('home.html', labels=labels, days_labels=days_labels)
 
 
 @app.route('/logout', methods=['GET'])
@@ -36,10 +108,6 @@ def logout():
     flask.session.clear()
     return flask.redirect(flask.url_for('index'))
 
-
-#############################
-# User section begins here  #
-#############################
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -289,4 +357,4 @@ def manage_items():
 
 
 if __name__ == '__main__':
-    app.run(threaded=True, port=5000, debug=False)
+    app.run(threaded=True, port=5000, debug=True, host='0.0.0.0')
