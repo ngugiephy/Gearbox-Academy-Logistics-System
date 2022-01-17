@@ -4,7 +4,12 @@
     <!-- Sidebar user panel -->
     <div class="user-panel">
       <div class="pull-left image">
-        <img src="/static/images/profile.jpg" class="img-circle" alt="User Image">
+            {% if session['logged_in'] %}
+              <img src="/static/images/{{session.get('user').get('profile_pic')}}" class="img-circle" alt="User Image">
+            {% else %}
+              <img src="/static/images/gearbox_logo.png" class="img-circle" alt="User Image">
+          {% endif %}
+
       </div>
       <div class="pull-left info">
         <a><i class="fa fa-circle text-success"></i> Online</a>
@@ -17,8 +22,8 @@
       <li class=""><a href="/"><i class="fa fa-dashboard"></i> <span>Home</span></a></li>
 <!--      <li class=""><a href="top-deals"><span class="glyphicon glyphicon-lock"></span> <span>Top Deals</span></a></li>-->
       <li class=""><a href="/search-items"><span class="glyphicon glyphicon-lock"></span> <span>Search items</span></a></li>
-      <li class=""><a href="/picked-items"><span class="glyphicon glyphicon-lock"></span> <span>Picked items</span></a></li>
-      <li class=""><a href="/history"><span class="glyphicon glyphicon-lock"></span> <span>History</span></a></li>
+      <li class=""><a href="/return-items"><span class="glyphicon glyphicon-lock"></span> <span>Return items</span></a></li>
+<!--      <li class=""><a href="/history"><span class="glyphicon glyphicon-lock"></span> <span>History</span></a></li>-->
       <br/>
       <br/>
 

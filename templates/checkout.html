@@ -1,5 +1,18 @@
 
 {% include 'includes/header.html' %}
+<style type="text/css">
+    .right-shelf{
+      -webkit-transform: scaleX(-1);
+      transform: scaleX(-1);
+    }
+    .shelf {
+      position: relative;
+    }
+    .drawer{
+        position: absolute;
+    }
+</style>
+
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
@@ -45,25 +58,31 @@
               <table id="example1" class="table table-bordered">
                 <thead>
                   <th>ID</th>
-                  <th>Photo</th>
-                  <th>Name</th>
-                  <th>Shelf No.</th>
-                  <th>Drawer No.</th>
-                  <th>Action</th>
+                  <th>Details</th>
                 </thead>
                 <tbody>
                    {%for item in items%}
                        <tr>
-                          <td>{{item.get('id')}}</td>
-                          <td> <img src="/static/images/{{item.get('image')}}" width='100px' height='100px'> </td>
-                          <td>{{item.get('name')}}</td>
-                          <td>{{item.get('shelf')}}</td>
-                          <td>{{item.get('drawer')}}</td>
+                          <td>{{loop.index}}</td>
                           <td>
-                              <input type="number" class="quantity" value="1" min="1" max="10">
-<!--                            <button class='btn btn-success btn-sm edit btn-flat' data-id='{{item.get("id")}}'><i class="fas fa-cart-plus"></i> Add</button>-->
-                            <button class='btn btn-danger btn-sm delete btn-flat' data-id='{{item.get("id")}}'><i class='fa fa-trash'></i> Remove</button>
-                          </td>
+                              <center>
+                                  <p class="name">{{item.get('name')}}</p>
+                                  <img src="/static/images/{{item.get('image')}}"  width='100px' height='100px'>
+                                  <br>
+                                Shelf <span class="shelf">{{item.get('shelf')}}</span>
+                                Drawer <span class="drawer">{{item.get('drawer')}}</span>
+                               <br>
+                               <br>
+                                 <input type="number" class="quantity" value="1" min="1" max="10">
+                                  <br>
+                                  <br>
+                                  <button class='btn btn-danger btn-sm delete btn-flat' data-id='{{item.get("id")}}'><i class='fa fa-trash'></i> Remove</button>
+
+                              </center>
+
+                            </td>
+
+
                         </tr>
                    {%endfor%}
 
@@ -77,8 +96,36 @@
                       <i id="lock-closed" class="fa fa-unlock"></i>
                       <i id="lock-opened" class="fa fa-unlock" style="display: none;"></i>
                           Open Locks</button>
-
           </center>
+
+          <br>
+          <br>
+
+          <div class="box">
+            
+           <div id="shelves" class="box-body" style="width: 100%">
+                <center>
+                    <div class="shelf" style="display: inline">
+                        <p width="0%" id="shelf0">    
+                    </div>
+                    <div class="shelf" style="display: inline">
+                        <img src="/static/images/shelf-closed.png" width="20%" id="shelf1">    
+                    </div>
+                    <div class="shelf" style="display: inline">
+                        <img src="/static/images/shelf-closed.png" width="20%" id="shelf2" class="right-shelf">
+                    </div>
+                    <div class="shelf" style="display: inline">
+                        <img src="/static/images/shelf-closed.png" width="20%" id="shelf3">
+                    </div>
+                    <div class="shelf" style="display: inline">
+                        <img src="/static/images/shelf-closed.png" width="20%" id="shelf4" class="right-shelf">
+                    </div>
+
+                </center>
+
+             </div>
+          </div>
+
       </div>
     </section>
   </div>
@@ -148,6 +195,39 @@ $(function(){
       }
     });
 
+
+    /**
+     * 
+     * garbage code
+     * should look for a better library to do the task below
+     * 
+     * 
+     * */
+    occupiedDrawers = [];
+
+    for (var i = trs.length - 1; i >= 0; i--) {
+        shelf = $(trs[i]).find('.shelf').text();
+        drawer = $(trs[i]).find('.drawer').text();
+
+        shelf_height = $('#shelf'+shelf).height();
+        drawer_height = shelf_height/3;
+
+
+        html = `<div class="col-xs-12 drawer" style="display: inline;width:`+(3/4*drawer_height)+`px">
+                  <img src="`+$(trs[i]).find('img').attr('src')+`" width="`+(3/4*drawer_height)+`px" height="`+(3/4*drawer_height)+`px" style="margin-top:`+((drawer-1)*drawer_height)+`px;padding-top:10px">
+                  
+                </div>`
+//<span style="text-overflow: ellipsis;overflow: hidden; white-space: nowrap;">`+$(trs[i]).find('.name').text()+`</span>
+       
+        openShelf(shelf);
+
+        if (!occupiedDrawers.includes(shelf+' '+drawer)) {
+            $('#shelf'+(shelf-1)).parent().append(html);
+            occupiedDrawers.push(shelf+' '+drawer);
+        }
+
+    }
+
     // remove listening to further clicks
     $(document).on('click', '#open-locks', function(e){});
   });
@@ -163,7 +243,7 @@ function deleteItemFromCart(id){
     success: function(response){
 
       Toastify({
-        text: response.name+" deleted successfully",
+        text: response.name+" removed successfully",
         duration: 5000,
         close: true,
         gravity: "bottom", // `top` or `bottom`
@@ -197,7 +277,10 @@ function getRow(id){
   });
 }
 
-
+function openShelf(num) {
+    $('#shelf'+num).attr('src', '/static/images/shelf-open.png');
+}
 </script>
 </body>
 </html>
+

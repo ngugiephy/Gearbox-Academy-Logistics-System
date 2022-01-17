@@ -52,17 +52,17 @@
                   <th>ID</th>
                   <th>Photo</th>
                   <th>Name</th>
-                  <th>Action</th>
                 </thead>
                 <tbody>
                    {%for item in items%}
                        <tr>
-                          <td>{{item.get('id')}}</td>
-                          <td> <img src="/static/images/{{item.get('image')}}" width='100px' height='100px'> </td>
-                          <td>{{item.get('name')}}</td>
+                           <td>{{loop.index}}</td>
+                          <td> <img src="/static/images/{{item.get('image')}}" style="float:right;" width='100px' height='100px'> </td>
                           <td>
-                            <button class='btn btn-success btn-sm edit btn-flat' data-id='{{item.get("id")}}'><i class="fas fa-cart-plus"></i> Add</button>
-<!--                            <button class='btn btn-danger btn-sm delete btn-flat' data-id='{{item.get("id")}}'><i class='fa fa-trash'></i> Remove</button>-->
+                              <center>
+                                 <p>{{item.get('name')}}</p>
+                                <button class='btn btn-success btn-sm edit btn-flat' data-id='{{item.get("id")}}'><i class="fas fa-cart-plus"></i> Add</button>
+                              </center>
                           </td>
                         </tr>
                    {%endfor%}
