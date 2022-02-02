@@ -4,12 +4,13 @@ import mysql.connector  # for connecting to MySQL database
 import bcrypt  # for hashing passwords
 import os  # for saving uploaded images to file system
 import json  # for manipulating AJAX request data
-
+import paho.mqtt.client as mqtt
+import time
 """
     Set your MySQL's password here
 """
-DATABASE_USER = 'phpmyadmin'
-DATABASE_PASSWORD = '123456'
+DATABASE_USER = 'root'
+DATABASE_PASSWORD = ''
 DATABASE_HOST = 'localhost'
 DATABASE_NAME = 'gearbox_academy_logistics'
 
@@ -226,6 +227,7 @@ def checkout():
 
         shelves_to_open = []
 
+
         for item in json.loads(items):
             my_cursor.execute('SELECT shelf,drawer FROM items WHERE id = %s', (item.get('id'),))
             result = my_cursor.fetchone()
@@ -236,11 +238,27 @@ def checkout():
             my_db.commit()
 
         # here is where we should communicate with the nodeMcu to open locks
-        shelves_to_open = set(shelves_to_open)
+
+        # MQTT SECTION
+        client = mqtt.Client("P1")
+        broker_address = "192.168.0.200"
+        client.connect(broker_address)
+        # shelves_to_open1=' '.join(str(e) for e in shelves_to_open)
+        for shelves in shelves_to_open:
+            client.publish("inTopic", shelves)
+
+
+
+        # confirm if locks are open
+
+        # client.subscribe("outTopic")
+
 
         # clear users cart items
         my_cursor.execute('DELETE FROM cart WHERE user_id = %s ', (user_id,))
         my_db.commit()
+
+        return flask.jsonify('success')
 
     my_cursor.execute('SELECT * FROM cart WHERE user_id = %s', (user_id,))
     results = my_cursor.fetchall()
@@ -290,6 +308,7 @@ def admin_login():
             return flask.redirect(flask.url_for('admin'))
 
     else:
+
         return flask.render_template('admin/login.html')
 
 
