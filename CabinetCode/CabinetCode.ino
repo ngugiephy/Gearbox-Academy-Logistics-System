@@ -580,7 +580,8 @@ void checkButton(){
       
       if (!wm.startConfigPortal("GA_Logistics", "clock420")) {
         debugln("failed to connect or hit timeout");
-        delay(3000);
+        LED(false);
+        //delay(3000);
         //ESP.restart();
       } else {
         //if you get here you have connected to the WiFi
