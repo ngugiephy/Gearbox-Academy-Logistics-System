@@ -151,6 +151,43 @@ void configModeCallback(WiFiManager *myWiFiManager)
   debugln(WiFi.softAPIP());
 }
 
+void LED(bool state)
+{
+  digitalWrite(LED_PIN, state);
+}
+
+bool force_state = false;
+void blink_para(int timeout_){
+  
+  unsigned int previous_time = millis();
+  unsigned int current_time = millis();
+
+  bool Lstate = true;
+
+  while((current_time - previous_time) < timeout_){
+      
+    volatile unsigned int previous_t;
+    unsigned int current_t = millis();
+    int t = 200;
+    
+    if((current_t - previous_t) > t){
+      LED(Lstate);
+      Lstate = !Lstate;  
+      previous_t = current_t; 
+    }
+    
+    if(digitalRead(TRIGGER_PIN) == LOW) {
+     force_state = true;
+     
+     debugln("button  pressed");
+     LED(true);
+     break;
+    }    
+    current_time = millis();
+  }
+  LED(true);
+}
+
 void WifiManagersetup(){
 
 
@@ -162,6 +199,11 @@ void WifiManagersetup(){
     debugln(F("Forcing config mode as there was a Double reset detected -- currently disabled"));
    // forceConfig = true;  // uncomment to enablr double reset funct 
   }
+  
+  debugln("start b check");
+  blink_para(5000);
+  force_state == 1 ? forceConfig = true : forceConfig = false;
+  debugln("end of b check");
 
   bool spiffsSetup = loadConfigFile();
   if (!spiffsSetup)
@@ -274,12 +316,6 @@ void WifiManagersetup(){
   }
 
 
-}
-
-
-void LED(bool state)
-{
-  digitalWrite(LED_PIN, state);
 }
 
 void Buzz(bool state)
