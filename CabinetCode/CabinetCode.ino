@@ -225,6 +225,8 @@ void WifiManagersetup(){
   wm.setSaveConfigCallback(saveConfigCallback);
   //set callback that gets called when connecting to previous WiFi fails, and enters Access Point mode
   wm.setAPCallback(configModeCallback);
+  
+  wm.setConfigPortalTimeout(60); // auto close configportal after 60 seconds
 
   //--- additional Configs params ---
 
