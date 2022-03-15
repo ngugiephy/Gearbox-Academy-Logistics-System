@@ -4,12 +4,18 @@ import mysql.connector  # for connecting to MySQL database
 import bcrypt  # for hashing passwords
 import os  # for saving uploaded images to file system
 import json  # for manipulating AJAX request data
+import paho.mqtt.client as mqtt
 
+client = mqtt.Client("P1")
+broker = 'localhost'
+port = 1883
+
+client.connect(broker, port, 60)
 """
     Set your MySQL's password here
 """
-DATABASE_USER = 'phpmyadmin'
-DATABASE_PASSWORD = '123456'
+DATABASE_USER = 'root'
+DATABASE_PASSWORD = ''
 DATABASE_HOST = 'localhost'
 DATABASE_NAME = 'gearbox_academy_logistics'
 
@@ -226,6 +232,7 @@ def checkout():
 
         shelves_to_open = []
 
+
         for item in json.loads(items):
             my_cursor.execute('SELECT shelf,drawer FROM items WHERE id = %s', (item.get('id'),))
             result = my_cursor.fetchone()
@@ -236,11 +243,86 @@ def checkout():
             my_db.commit()
 
         # here is where we should communicate with the nodeMcu to open locks
-        shelves_to_open = set(shelves_to_open)
+
+
+
+
+
+
+
+
+        # MQTT SECTION
+
+        # shelves_to_open1=' '.join(str(e) for e in shelves_to_open)
+        print(shelves_to_open)
+        shelves_to_open = list(set(shelves_to_open))
+        print(shelves_to_open)
+        for shelf in shelves_to_open:
+            print(shelf, "opened")
+            client.publish("inTopic", str(shelf) + ',' + str(user_id))
+
+
+            def on_connect(client, userdata, flags, rc):
+                print("[STATUS] broker connected: " + str(rc))
+                client.subscribe('outTopic')
+
+
+
+            def on_message(client, userdata, msg):
+
+                message = str(msg.payload)
+
+                print("Topic " + msg.topic + " / Message: " + message)
+                # print('user '+ user_id)
+
+            def on_disconnect(client, userdata, rc):
+                if rc != 0:
+                    print("Unexpected disconnection.")
+
+
+            try:
+                print("[STATUS] Initialize MQTT...")
+
+
+
+                client.on_connect = on_connect
+                client.on_message = on_message
+                client.on_disconnect = on_disconnect
+
+                client.connect(broker)
+                # client.loop_forever()
+            except KeyboardInterrupt:
+                print("\nCtrl+C")
+
+
+            # mqtt.on_message = on_message
+            # messages=[]
+            # for message in messages:
+            #     message = client.subscribe('outTopic')
+            #     print(message)
+            #     messages = [messages, tuple(message)]
+
+
+            # data = "cabinets" + str(messages)+ "opened"
+            # print(data)
+            #
+            # my_cursor.execute('INSERT INTO cabinetaccesslogs (user_id, data)'
+            #                   'VALUES (%s,%s)', (user_id, data))
+            # my_db.commit()
+
+
+
+
+        # confirm if locks are open
+
+        # client.subscribe("outTopic")
+
 
         # clear users cart items
         my_cursor.execute('DELETE FROM cart WHERE user_id = %s ', (user_id,))
         my_db.commit()
+
+        return flask.jsonify('success')
 
     my_cursor.execute('SELECT * FROM cart WHERE user_id = %s', (user_id,))
     results = my_cursor.fetchall()
@@ -256,11 +338,26 @@ def checkout():
         items.append(my_cursor.fetchone())
 
     return flask.render_template('checkout.html', items=items)
+#
+# @mqtt.on_connect()
+# def handle_connect(client, userdata, flags, rc):
+#     client.subscribe('outTopic')
+#
+# @mqtt.on_message()
+# def handle_mqtt_message(client, userdata, message):
+#     data = dict(
+#         topic=message.topic,
+#         payload=message.payload.decode()
+#     my_cursor.execute('INSERT INTO cabinetaccesslogs (user_id, item_id, quantity, data)'
+#                       'VALUES (%s,%s,%s)', (user_id, item.get('id'), item.get('quantity')))
+#
+#     )
 
 
 #############################
 # Admin section begins here #
 #############################
+
 
 
 @app.route('/admin', methods=['GET'])
@@ -290,6 +387,7 @@ def admin_login():
             return flask.redirect(flask.url_for('admin'))
 
     else:
+
         return flask.render_template('admin/login.html')
 
 
