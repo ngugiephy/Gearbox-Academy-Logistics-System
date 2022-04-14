@@ -259,7 +259,7 @@ def checkout():
         print(shelves_to_open)
         for shelf in shelves_to_open:
             print(shelf, "opened")
-            client.publish("inTopic", str(shelf) + ',' + str(user_id))
+            client.publish("inTopic", str(shelf) + ',' + str(user_id), 1 , False)
 
 
             def on_connect(client, userdata, flags, rc):
