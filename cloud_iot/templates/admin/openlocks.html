@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        {% include 'admin/includes/header.html' %}
+
+    <style>
+.button {
+  background-color:#4a5b5e;
+  border: none;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+.button1 {border-radius: 18px;}
+
+</style>
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+        {% include 'admin/includes/navbar.html' %}
+        {% include 'admin/includes/menubar.html' %}
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>
+            Cabinet Locks
+          </h1>
+          <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">cabinet locks</li>
+          </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+
+           <form>
+                <a href=#call1 id="call1" class="button button1" >Open Cabinet 1</button></a><br>
+                <a href=#call2 id="call2" class="button button1" >Open Cabinet 2</button></a><br>
+                <a href=#call3 id="call3" class="button button1" >Open Cabinet 3</button></a><br>
+                <a href=#call4 id="call4" class="button button1" >Open Cabinet 4</button></a><br>
+                <a href=#call5 id="call5" class="button button1" >Open Cabinet 5</button></a><br>
+                <a href=#call6 id="call6" class="button button1" >Open Cabinet 6</button></a><br>
+                <a href=#call7 id="call7" class="button button1" >Open Cabinet 7</button></a><br>
+                <a href=#call8 id="call8" class="button button1" >Open Cabinet 8</button></a><br>
+           </form>
+
+            <div class="section" id="call1">
+                <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+                <script type=text/javascript>
+                    $(function() {
+                     $('a#call1').on('click', function(e) {
+                       e.preventDefault()
+                       $.getJSON('/call1',
+                           function(data) {
+                         //do nothing
+                       });
+                     return false;
+                    });
+                  });
+                </script>
+            </div>
+
+            <div class="section" id="call2">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+            $(function() {
+              $('a#call2').on('click', function(e) {
+                e.preventDefault()
+                $.getJSON('/call2',
+                    function(data) {
+                  //do nothing
+                });
+                return false;
+              });
+            });
+    </script>
+</div>
+
+<div class="section" id="call3">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+            $(function() {
+              $('a#call3').on('click', function(e) {
+                e.preventDefault()
+                $.getJSON('/call3',
+                    function(data) {
+                  //do nothing
+                });
+                return false;
+              });
+            });
+    </script>
+</div>
+
+<div class="section" id="call4">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+            $(function() {
+              $('a#call4').on('click', function(e) {
+                e.preventDefault()
+                $.getJSON('/call4',
+                    function(data) {
+                  //do nothing
+                });
+                return false;
+              });
+            });
+    </script>
+</div>
+
+<div class="section" id="call5">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+            $(function() {
+              $('a#call5').on('click', function(e) {
+                e.preventDefault()
+                $.getJSON('/call5',
+                    function(data) {
+                  //do nothing
+                });
+                return false;
+              });
+            });
+    </script>
+</div>
+
+<div class="section" id="call6">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+            $(function() {
+              $('a#call6').on('click', function(e) {
+                e.preventDefault()
+                $.getJSON('/call6',
+                    function(data) {
+                  //do nothing
+                });
+                return false;
+              });
+            });
+    </script>
+</div>
+
+<div class="section" id="call7">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+            $(function() {
+              $('a#call7').on('click', function(e) {
+                e.preventDefault()
+                $.getJSON('/call7',
+                    function(data) {
+                  //do nothing
+                });
+                return false;
+              });
+            });
+    </script>
+</div>
+
+<div class="section" id="call8">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+            $(function() {
+              $('a#call8').on('click', function(e) {
+                e.preventDefault()
+                $.getJSON('/call8',
+                    function(data) {
+                  //do nothing
+                });
+                return false;
+              });
+            });
+    </script>
+</div>
+
+        </section>
+
+  </div>
+
+        {% include 'admin/includes/footer.html' %}
+    {% include 'admin/includes/scripts.html' %}
+
+    </div>
+</body>
+</html>

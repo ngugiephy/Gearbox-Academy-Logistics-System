@@ -17,7 +17,7 @@ client.connect(broker, port, 60)
 DATABASE_USER = 'root'
 DATABASE_PASSWORD = ''
 DATABASE_HOST = 'localhost'
-DATABASE_NAME = 'gearbox_academy_logistics'
+DATABASE_NAME = 'Logistics gearbox'
 
 IMAGES_DIRECTORY = './static/images/'
 
@@ -391,6 +391,9 @@ def admin_login():
         return flask.render_template('admin/login.html')
 
 
+
+
+
 ############################
 # Admin management section #
 ############################
@@ -414,7 +417,6 @@ def manage_users():
                           'VALUES (%s,%s,%s,%s,"profile.jpg",%s)',
                           (first_name, second_name, email, mobile, hashed_password))
         my_db.commit()
-
         flask.session['success-message'] = f'User {first_name} {second_name} added successfully'
     elif 'delete-user' in request.form:
         user_id = request.form['id']
@@ -504,6 +506,84 @@ def manage_items():
 
     return flask.render_template('admin/manage-items.html', items=items)
 
+
+@app.route("/openlocks", methods=["POST", "GET"])
+
+def openlocks():
+    return flask.render_template('admin/openlocks.html')
+
+
+@app.route("/call1", methods=["POST", "GET"])
+def call1():
+    if not flask.session.get('admin_logged_in'):
+        return flask.redirect(flask.url_for('admin_login'))
+
+    client.publish("inTopic", "1", 1 , False)
+    client.subscribe("outTopic", 1)
+    return flask.render_template('admin/openlocks.html')
+
+@app.route("/call2", methods=["POST", "GET"])
+def call2():
+    if not flask.session.get('admin_logged_in'):
+        return flask.redirect(flask.url_for('admin_login'))
+
+    client.publish("inTopic", "2", 1 , False)
+    client.subscribe("outTopic", 1)
+    return flask.render_template('admin/openlocks.html')
+
+@app.route("/call3", methods=["POST", "GET"])
+def call3():
+    if not flask.session.get('admin_logged_in'):
+        return flask.redirect(flask.url_for('admin_login'))
+
+    client.publish("inTopic", "3", 1 ,False)
+    client.subscribe("outTopic", 1)
+    return flask.render_template('admin/openlocks.html')
+
+@app.route("/call4", methods=["POST", "GET"])
+def call4():
+    if not flask.session.get('admin_logged_in'):
+        return flask.redirect(flask.url_for('admin_login'))
+
+    client.publish("inTopic", "4", 1 , False)
+    client.subscribe("outTopic", 1)
+    return flask.render_template('admin/openlocks.html')
+
+@app.route("/call5", methods=["POST", "GET"])
+def call5():
+    if not flask.session.get('admin_logged_in'):
+        return flask.redirect(flask.url_for('admin_login'))
+
+    client.publish("inTopic", "5", 1, False)
+    client.subscribe("outTopic", 1)
+    return flask.render_template('admin/openlocks.html')
+
+@app.route("/call6", methods=["POST", "GET"])
+def call6():
+    if not flask.session.get('admin_logged_in'):
+        return flask.redirect(flask.url_for('admin_login'))
+
+    client.publish("inTopic", "6", 1 ,False)
+    client.subscribe("outTopic", 1)
+    return flask.render_template('admin/openlocks.html')
+
+@app.route("/call7", methods=["POST", "GET"])
+def call7():
+    if not flask.session.get('admin_logged_in'):
+        return flask.redirect(flask.url_for('admin_login'))
+
+    client.publish("inTopic", "7", 1, False)
+    client.subscribe("outTopic", 1)
+    return flask.render_template('admin/openlocks.html')
+
+@app.route("/call8", methods=["POST", "GET"])
+def call8():
+    if not flask.session.get('admin_logged_in'):
+        return flask.redirect(flask.url_for('admin_login'))
+
+    client.publish("inTopic", "8", 1, False)
+    client.subscribe("outTopic", 1)
+    return flask.render_template('admin/openlocks.html')
 
 if __name__ == '__main__':
     app.run(threaded=True, port=5000, debug=False, host='0.0.0.0')
