@@ -17,7 +17,7 @@ client.connect(broker, port, 60)
 DATABASE_USER = 'root'
 DATABASE_PASSWORD = ''
 DATABASE_HOST = 'localhost'
-DATABASE_NAME = 'Logistics gearbox'
+DATABASE_NAME = 'gearbox_academy_logistics'
 
 IMAGES_DIRECTORY = './static/images/'
 
@@ -232,7 +232,6 @@ def checkout():
 
         shelves_to_open = []
 
-
         for item in json.loads(items):
             my_cursor.execute('SELECT shelf,drawer FROM items WHERE id = %s', (item.get('id'),))
             result = my_cursor.fetchone()
@@ -244,13 +243,6 @@ def checkout():
 
         # here is where we should communicate with the nodeMcu to open locks
 
-
-
-
-
-
-
-
         # MQTT SECTION
 
         # shelves_to_open1=' '.join(str(e) for e in shelves_to_open)
@@ -259,14 +251,11 @@ def checkout():
         print(shelves_to_open)
         for shelf in shelves_to_open:
             print(shelf, "opened")
-            client.publish("inTopic", str(shelf) + ',' + str(user_id), 1 , False)
-
+            client.publish("inTopic", str(shelf) + ',' + str(user_id), 1, False)
 
             def on_connect(client, userdata, flags, rc):
                 print("[STATUS] broker connected: " + str(rc))
                 client.subscribe('outTopic')
-
-
 
             def on_message(client, userdata, msg):
 
@@ -279,11 +268,8 @@ def checkout():
                 if rc != 0:
                     print("Unexpected disconnection.")
 
-
             try:
                 print("[STATUS] Initialize MQTT...")
-
-
 
                 client.on_connect = on_connect
                 client.on_message = on_message
@@ -294,14 +280,12 @@ def checkout():
             except KeyboardInterrupt:
                 print("\nCtrl+C")
 
-
             # mqtt.on_message = on_message
             # messages=[]
             # for message in messages:
             #     message = client.subscribe('outTopic')
             #     print(message)
             #     messages = [messages, tuple(message)]
-
 
             # data = "cabinets" + str(messages)+ "opened"
             # print(data)
@@ -310,17 +294,13 @@ def checkout():
             #                   'VALUES (%s,%s)', (user_id, data))
             # my_db.commit()
 
-
-
-
         # confirm if locks are open
 
         # client.subscribe("outTopic")
 
-
         # clear users cart items
-        my_cursor.execute('DELETE FROM cart WHERE user_id = %s ', (user_id,))
-        my_db.commit()
+        # my_cursor.execute('DELETE FROM cart WHERE user_id = %s ', (user_id,))
+        # my_db.commit()
 
         return flask.jsonify('success')
 
@@ -338,6 +318,8 @@ def checkout():
         items.append(my_cursor.fetchone())
 
     return flask.render_template('checkout.html', items=items)
+
+
 #
 # @mqtt.on_connect()
 # def handle_connect(client, userdata, flags, rc):
@@ -354,10 +336,120 @@ def checkout():
 #     )
 
 
-#############################
-# Admin section begins here #
-#############################
+# return_items section
+@app.route('/return-items', methods=['GET', 'POST'])
+def return_items():
+    if not flask.session.get('logged_in'):
+        return flask.redirect(flask.url_for('login'))
+    user_id = flask.session.get('user_id')
+    if 'add-item-to-cart' in request.form:
+        item_id = request.form['id']
+        user_id = flask.session.get('user_id')
 
+        my_cursor.execute('FROM cart (user_id, item_id, quantity) '
+                          'VALUES (%s,%s,"1")',
+                          (user_id, item_id))
+        my_db.commit()
+
+        my_cursor.execute('SELECT name FROM cart WHERE id = %s', (item_id,))
+        result = my_cursor.fetchone()
+
+        return flask.jsonify(result)
+
+    if 'delete-item-from-cart' in request.form:
+        item_id = request.form['id']
+        my_cursor.execute('DELETE FROM cart WHERE user_id = %s AND item_id = %s', (user_id, item_id))
+        my_db.commit()
+
+        my_cursor.execute('SELECT id,name FROM items WHERE id = %s', (item_id,))
+        result = my_cursor.fetchone()
+
+        return flask.jsonify(result)
+    elif 'open-locks' in request.form:
+        items = request.form['items']
+
+        shelves_to_open = []
+
+        # clear users cart items
+        my_cursor.execute('DELETE FROM cart WHERE user_id = %s ', (user_id,))
+        my_db.commit()
+
+        for item in json.loads(items):
+            my_cursor.execute('SELECT shelf,drawer FROM items WHERE id = %s', (item.get('id'),))
+            result = my_cursor.fetchone()
+            shelves_to_open.append(result.get('shelf'))
+
+            # my_cursor.execute('INSERT INTO logs (user_id, item_id, quantity)'
+            #                   'VALUES (%s,%s,%s)', (user_id, item.get('id'), item.get('quantity')))
+            # my_db.commit()
+        print(shelves_to_open)
+        shelves_to_open = list(set(shelves_to_open))
+        print(shelves_to_open)
+        for shelf in shelves_to_open:
+            print(shelf, "opened")
+            client.publish("inTopic", str(shelf) + ',' + str(user_id), 1, False)
+
+            def on_connect(client, userdata, flags, rc):
+                print("[STATUS] broker connected: " + str(rc))
+                client.subscribe('outTopic')
+
+            def on_message(client, userdata, msg):
+
+                message = str(msg.payload)
+
+                print("Topic " + msg.topic + " / Message: " + message)
+                # print('user '+ user_id)
+
+            def on_disconnect(client, userdata, rc):
+                if rc != 0:
+                    print("Unexpected disconnection.")
+
+            try:
+                print("[STATUS] Initialize MQTT...")
+
+                client.on_connect = on_connect
+                client.on_message = on_message
+                client.on_disconnect = on_disconnect
+
+                client.connect(broker)
+                # client.loop_forever()
+            except KeyboardInterrupt:
+                print("\nCtrl+C")
+
+            # mqtt.on_message = on_message
+            # messages=[]
+            # for message in messages:
+            #     message = client.subscribe('outTopic')
+            #     print(message)
+            #     messages = [messages, tuple(message)]
+
+            # data = "cabinets" + str(messages)+ "opened"
+            # print(data)
+            #
+            # my_cursor.execute('INSERT INTO cabinetaccesslogs (user_id, data)'
+            #                   'VALUES (%s,%s)', (user_id, data))
+            # my_db.commit()
+
+        # confirm if locks are open
+
+        # client.subscribe("outTopic")
+
+
+        return flask.jsonify('success')
+
+    my_cursor.execute('SELECT * FROM cart WHERE user_id = %s', (user_id,))
+    results = my_cursor.fetchall()
+
+    if len(results) == 0:
+        flask.session['error-message'] = 'You have returned all the items'
+        # return flask.redirect(flask.url_for('search_items'))
+
+    items = []
+    # probably should use mysql join here
+    for result in results:
+        my_cursor.execute('SELECT * FROM items WHERE id = %s', (result.get('item_id'),))
+        items.append(my_cursor.fetchone())
+    return flask.render_template('return-items.html', items=items)
 
 
 @app.route('/admin', methods=['GET'])

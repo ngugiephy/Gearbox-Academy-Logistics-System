@@ -34,7 +34,7 @@ CREATE TABLE `admin` (
   `second_name` varchar(20) NOT NULL,
   `email` varchar(50) NOT NULL,
   `password` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `admin`
@@ -55,7 +55,7 @@ CREATE TABLE `cart` (
   `user_id` int NOT NULL,
   `item_id` int NOT NULL,
   `quantity` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `cart`
@@ -80,7 +80,7 @@ CREATE TABLE `items` (
   `quantity` int NOT NULL,
   `description` varchar(100) NOT NULL,
   `external_link` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `items`
@@ -195,7 +195,7 @@ CREATE TABLE `logs` (
   `item_id` int NOT NULL,
   `quantity` int NOT NULL,
   `date_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `logs`
@@ -346,10 +346,10 @@ CREATE TABLE `users` (
   `first_name` varchar(20) NOT NULL,
   `second_name` varchar(20) NOT NULL,
   `email` varchar(50) NOT NULL,
-  `mobile` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '',
-  `profile_pic` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `mobile` varchar(20) CHARACTER SET utf8mb4  DEFAULT '',
+  `profile_pic` varchar(200) CHARACTER SET utf8mb4  NOT NULL,
   `password` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 
 --
 -- Dumping data for table `users`
